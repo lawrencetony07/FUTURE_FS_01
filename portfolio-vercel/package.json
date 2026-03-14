@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-backend-vercel",
+  "version": "1.0.0",
+  "description": "Vercel serverless contact form backend for D.Lawrence Tony Manikya Raj portfolio",
+  "dependencies": {
+    "resend": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
