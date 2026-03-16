@@ -8,7 +8,7 @@
    Deployed   → replace with your Render/Railway URL
    e.g.       → https://portfolio-backend.onrender.com
 ──────────────────────────────────────────────────── */
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'https://future-fs-01-3eo4.onrender.com';
 
 /* ─── CURSOR ────────────────────────────────── */
 const dot  = document.getElementById('cursorDot');

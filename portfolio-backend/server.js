@@ -116,6 +116,6 @@ app.get('/api/health', (req, res) => {
 /* ── Start ──────────────────────────────────────────── */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`\n✅  Server running  →  http://localhost:${PORT}`);
+  console.log(`\n✅  Server running  →  http://localhost:${3000}`);
   console.log(`📧  Emails will go  →  ${process.env.YOUR_EMAIL}\n`);
 });
