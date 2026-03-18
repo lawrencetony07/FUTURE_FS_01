@@ -1,14 +1,10 @@
-/* ─────────────────────────────────────────────────────
-   Portfolio script — D.Lawrence Tony Manikya Raj
-   Contact form posts to Node.js + Resend backend
-───────────────────────────────────────────────────── */
-
-/* ── BACKEND URL ────────────────────────────────────
-   Local dev  → http://localhost:3000
-   Deployed   → replace with your Render/Railway URL
-   e.g.       → https://portfolio-backend.onrender.com
-──────────────────────────────────────────────────── */
-const BACKEND_URL = 'http://localhost:3000';
+/* ═══════════════════════════════════════════════════════
+   Portfolio — D.Lawrence Tony Manikya Raj
+   Contact form powered by Web3Forms
+   ✅ No backend needed — works directly from the browser
+   ✅ No Node.js, no Express, no Render, no server
+   ✅ Just get a free key at web3forms.com
+═══════════════════════════════════════════════════════ */
 
 /* ─── CURSOR ────────────────────────────────── */
 const dot  = document.getElementById('cursorDot');
@@ -32,11 +28,11 @@ animRing();
 document.querySelectorAll('a, button, .skill-card, .project-card, .interest-card').forEach(el => {
   el.addEventListener('mouseenter', () => {
     ring.style.transform = 'translate(-50%,-50%) scale(1.6)';
-    ring.style.opacity = '1';
+    ring.style.opacity   = '1';
   });
   el.addEventListener('mouseleave', () => {
     ring.style.transform = 'translate(-50%,-50%) scale(1)';
-    ring.style.opacity = '0.6';
+    ring.style.opacity   = '0.6';
   });
 });
 
@@ -56,7 +52,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
 /* ─── SCROLL REVEAL ─────────────────────────── */
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('visible'); }
+    if (e.isIntersecting) e.target.classList.add('visible');
   });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
@@ -73,56 +69,76 @@ const barObserver = new IntersectionObserver(entries => {
 }, { threshold: 0.3 });
 document.querySelectorAll('.skill-card').forEach(card => barObserver.observe(card));
 
-/* ─── CONTACT FORM ───────────────────────────── */
-async function sendEmail(e) {
+/* ─── CONTACT FORM — Web3Forms ───────────────────────────────────
+   HOW TO ACTIVATE (30 seconds, completely free):
+   1. Go to https://web3forms.com
+   2. Enter your email: lawrencetony1508@gmail.com
+   3. Click "Create Access Key"
+   4. Check your inbox — copy the key they send you
+   5. In index.html find this line:
+        <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY" />
+      Replace YOUR_WEB3FORMS_KEY with your real key
+   6. Save index.html — done! No server needed.
+─────────────────────────────────────────────────────────────── */
+async function sendMessage(e) {
   e.preventDefault();
 
-  const btn    = e.target.querySelector('button[type="submit"]');
+  const btn    = document.getElementById('submitBtn');
   const status = document.getElementById('formStatus');
+  const form   = document.getElementById('contactForm');
 
+  /* Basic client-side validation */
   const name    = document.getElementById('from_name').value.trim();
   const email   = document.getElementById('from_email').value.trim();
   const message = document.getElementById('message').value.trim();
 
-  /* Client-side validation */
   if (!name || !email || !message) {
-    status.textContent   = '✗ Please fill in all fields.';
-    status.className     = 'form-status error';
-    status.style.display = 'block';
+    status.textContent    = '✗ Please fill in all fields.';
+    status.style.display  = 'block';
+    status.style.border   = '1px solid #8b2424';
+    status.style.color    = '#e07070';
     return;
   }
 
-  /* Update button state */
-  btn.textContent      = 'Sending...';
-  btn.disabled         = true;
+  /* Update button */
+  btn.textContent  = 'Sending...';
+  btn.disabled     = true;
   status.style.display = 'none';
-  status.className     = 'form-status';
 
   try {
-    const response = await fetch(`${BACKEND_URL}/api/contact`, {
+    /* Web3Forms API — no backend, direct from browser */
+    const formData = new FormData(form);
+    const response = await fetch('https://api.web3forms.com/submit', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ name, email, message }),
+      headers: { 'Accept': 'application/json' },
+      body:    formData,
     });
 
     const result = await response.json();
 
     if (result.success) {
+      /* ✅ Success */
       status.textContent   = '✓ Message sent! I\'ll get back to you within 24 hours.';
-      status.className     = 'form-status success';
       status.style.display = 'block';
-      e.target.reset();
+      status.style.border  = '1px solid #8a6a1e';
+      status.style.color   = '#c9a84c';
+      form.reset();
     } else {
-      throw new Error(result.error || 'Submission failed.');
+      /* Web3Forms returned an error */
+      throw new Error(result.message || 'Submission failed.');
     }
 
   } catch (err) {
-    status.textContent   = '✗ ' + (err.message || 'Something went wrong. Please try again.');
-    status.className     = 'form-status error';
+    /* ✗ Error */
+    status.textContent   = '✗ ' + (err.message === 'Failed to fetch'
+      ? 'Network error. Please check your connection and try again.'
+      : (err.message || 'Something went wrong. Please try again.'));
     status.style.display = 'block';
+    status.style.border  = '1px solid #8b2424';
+    status.style.color   = '#e07070';
   } finally {
-    btn.textContent = 'Send Message →';
-    btn.disabled    = false;
+    btn.textContent  = 'Send Message →';
+    btn.disabled     = false;
   }
 }
 
